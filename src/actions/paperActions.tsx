@@ -5,6 +5,11 @@ import dbConnect from '@/lib/db';
 import Paper from '@/models/Paper';
 import Mcq from '@/models/Mcq';
 
+
+interface PaperUpdateData {
+  name: string;
+  description: string;
+}
 export async function deletePaper(paperId: string) {
   await dbConnect();
   
@@ -22,7 +27,7 @@ export async function deletePaper(paperId: string) {
   }
 }
 
-export async function updatePaper(paperId: string, data: any) {
+export async function updatePaper(paperId: string, data: PaperUpdateData) {
   await dbConnect();
   
   try {

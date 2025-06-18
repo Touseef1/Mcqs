@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // 'use client';
 
 // import React, { useState, useEffect } from 'react';
@@ -155,6 +156,7 @@ interface McqFormProps {
   categories: { id: string; name: string }[];
   initialData?: McqFormData;
   onSubmit: (data: McqFormData) => Promise<void>;
+  showPaperField?: boolean; // Add this line
 }
 
 const McqForm: React.FC<McqFormProps> = ({ categories, initialData, onSubmit }) => {
@@ -164,7 +166,8 @@ const McqForm: React.FC<McqFormProps> = ({ categories, initialData, onSubmit }) 
     correctOption: 0,
     type: 'medium',
     category: categories?.length > 0 ? categories[0]?.id : '',
-    description: ''
+    description: '',
+    createdBy: '',
   });
 
 
@@ -196,12 +199,12 @@ const McqForm: React.FC<McqFormProps> = ({ categories, initialData, onSubmit }) 
 
     try {
       await onSubmit(formData);
+      toast.success('MCQ saved successfully');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save MCQ');
       toast.success(err.response?.data?.message || 'Failed to save MCQ');
     } finally {
       setIsLoading(false);
-      toast.success('MCQ saved successfully');
       formData.statement = '';
       formData.options = ['', '', '', ''];
       formData.correctOption = 0;

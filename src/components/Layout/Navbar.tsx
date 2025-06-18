@@ -5,7 +5,6 @@ import MobileMenu from '@/components/Layout/MobileMenu';
 
 export default async function Navbar() {
   const user = await getCurrentUser();
-
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">

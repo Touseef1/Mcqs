@@ -1,7 +1,29 @@
 import dbConnect from '@/lib/db';
 import Mcq from '@/models/Mcq';
 import Paper from '@/models/Paper';
-import PaperComponent from '@/components/Paper/PaperComponent';
+import McqsClientComponent from '@/components/Paper/PaperComponent';
+
+// Define the types matching the PaperComponent's expected props
+interface MCQ {
+  _id: string;
+  statement: string;
+  options: string[];
+  correctOption: number;
+  paper?: {
+    _id: string;
+    name: string;
+  } | null;
+  type?: string;
+  createdBy?: {
+    name?: string;
+  } | null;
+  description?: string;
+}
+
+interface PaperType {
+  _id: string;
+  name: string;
+}
 
 export default async function McqsPage() {
   await dbConnect();
@@ -18,34 +40,36 @@ export default async function McqsPage() {
     .sort({ createdAt: -1 })
     .lean();
 
-  // Convert to plain objects for serialization
-  const serializedMcqs = mcqs.map(mcq => ({
-    ...mcq,
+  // Convert to plain objects for serialization and match MCQ type
+  const serializedMcqs: MCQ[] = mcqs.map((mcq: typeof mcqs[0] extends undefined ? unknown : typeof mcqs[0]) => ({
     _id: mcq._id.toString(),
-    paper: mcq.paper ? {
-      ...mcq.paper,
-      _id: mcq.paper._id.toString(),
-      name: mcq.paper.name
-    } : null,
-    createdAt: mcq.createdAt?.toISOString(),
-    updatedAt: mcq.updatedAt?.toISOString(),
-    createdBy: mcq.createdBy ? {
-      ...mcq.createdBy,
-      _id: mcq.createdBy._id.toString(),
-    } : null,
-  }));  
+    statement: mcq.statement,
+    options: mcq.options,
+    correctOption: mcq.correctOption,
+    paper: mcq.paper
+      ? {
+          _id: mcq.paper._id.toString(),
+          name: mcq.paper.name,
+        }
+      : null,
+    type: mcq.type,
+    createdBy: mcq.createdBy
+      ? {
+          name: mcq.createdBy.name,
+        }
+      : null,
+    description: mcq.description,
+  }));
 
-  const serializedPapers = papers.map(paper => ({
-    ...paper,
-    _id: paper._id.toString(),
-    createdBy: paper.createdBy ? {
-      ...paper.createdBy,
-      _id: paper.createdBy._id.toString(),
-    } : null,
+  // Convert to plain objects for serialization and match Paper type
+  const serializedPapers: PaperType[] = papers.map((paper: typeof papers[0] extends undefined ? unknown : typeof papers[0]) => ({
+    // _id: paper?_id: (paper._id as O_id: (paper._id as ObjectId).toString(),bjectId).toString(),._id.toString(),
+    _id: (paper._id as string).toString(),
+    name: paper.name,
   }));
 
   return (
-    <PaperComponent 
+    <McqsClientComponent 
       mcqs={serializedMcqs} 
       papers={serializedPapers} 
     />

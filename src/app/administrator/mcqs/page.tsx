@@ -13,12 +13,6 @@ export default async function AdminMcqsPage() {
     redirect('/');
   }
 
-//   const mcqs = await Mcq.find({})
-//     .populate('category', 'name')
-//     .populate('createdBy', 'name email')
-//     .sort({ createdAt: -1 })
-//     .lean();
-
   const mcqsRaw = await Mcq.find({})
     .populate('category', 'name')
     .populate('createdBy', 'name email')
@@ -41,8 +35,6 @@ const mcqs = mcqsRaw.map((mcq: any) => ({
       }
     : null,
 }));
-
-
 
   return <AdminMcqsClient mcqs={mcqs} />;
 }
